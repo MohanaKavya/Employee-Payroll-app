@@ -17,10 +17,21 @@ window.addEventListener("DOMContentLoaded", (event) => {
     const salary = document.querySelector("#salary");
     const output = document.querySelector(".salary-output");
     output.textContent = salary.value;
-}); 
     salary.addEventListener("input", function() {
         output.textContent = salary.value;
     });
+
+    const startdate = document.querySelector("#startDate");
+    startdate.addEventListener("input", function() {
+        let date = new Date(Date.parse(getInputValueById('#month') + " " + getInputValueById('#day') + " " + getInputValueById('#year')));
+        try {
+            (new EmployeePayroll()).startDate = date;
+            setTextValue('.date-error', "");
+        } catch (e) {
+            setTextValue('.date-error', e);
+        }
+    });
+});
 
 const save = () => {
     try {
@@ -72,6 +83,7 @@ function createAndUpdateStorage(employeePayrollData) {
 
 const createEmployeePayroll = () => {
     let employeePayrollData = new EmployeePayroll();
+    employeePayrollData.id = createNewEmployeeId();
     employeePayrollData.name = getInputValueById('#name');
     employeePayrollData.profilePic = getSelectedValues('[name=profile]').pop();
     employeePayrollData.gender = getSelectedValues('[name=gender]').pop();
@@ -98,3 +110,10 @@ const getSelectedValues = (propertyValue) => {
     });
     return selItems;
 } 
+
+const createNewEmployeeId = () => {
+    let empID = localStorage.getItem("EmployeeID");
+    empID = !empID ? 1 : (parseInt(empID) + 1).toString();
+    localStorage.setItem("EmployeeID", empID);
+    return empID;
+}
